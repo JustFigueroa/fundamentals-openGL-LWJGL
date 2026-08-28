@@ -1,0 +1,74 @@
+/***************************************************************
+* file: FundamentalsOpenGL.java
+* author: Justin Figueroa
+* class: CS 4450 – Computer Graphics
+*
+* assignment: program 1
+* date last modified: 8/27/2026
+*
+* purpose: This program draws a window and draws primitives based on coordinates
+* from file passed by user via command line
+*
+****************************************************************/
+package fundamentals.opengl;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.input.Keyboard;
+
+public class FundamentalsOpenGL{
+    
+public void start(){
+    try{
+        createWindow();
+        Keyboard.create();
+        initGL();
+        render();
+    }
+    catch (Exception e){
+        e.printStackTrace();
+    }
+}
+public void end(){
+    Display.destroy();
+}
+
+private void createWindow() throws Exception{
+    Display.setFullscreen(false);
+    Display.setDisplayMode(new DisplayMode(640, 480));
+    Display.setTitle("Program 1: Render Shapes");
+    Display.create();
+}
+
+private void initGL(){
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 640, 0, 480, 1, -1);
+    glMatrixMode(GL_MODELVIEW);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+}
+
+private void render(){
+    while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+        try{
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glLoadIdentity();
+            glColor3f(1.0f,1.0f,1.0f);
+            Display.update();
+            Display.sync(60);
+        }
+        catch (Exception e){
+            
+        }
+    }
+    Display.destroy();
+}
+
+
+public static void main(String[] args)throws Exception{
+    FundamentalsOpenGL instance = new FundamentalsOpenGL();
+    instance.start();
+}
+
+}
