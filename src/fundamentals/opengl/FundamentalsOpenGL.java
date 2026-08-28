@@ -10,7 +10,9 @@
 * from file passed by user via command line
 *
 ****************************************************************/
+
 package fundamentals.opengl;
+import java.io.File;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
@@ -18,6 +20,9 @@ import org.lwjgl.input.Keyboard;
 
 public class FundamentalsOpenGL{
     
+public void readFile(){
+    
+}
 public void start(){
     try{
         createWindow();
@@ -50,11 +55,20 @@ private void initGL(){
 }
 
 private void render(){
+    Circle circle = new Circle();
+    Square square = new Square();
+    Line line = new Line();
+    
     while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
         try{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glLoadIdentity();
             glColor3f(1.0f,1.0f,1.0f);
+            
+            circle.render();
+            square.render();
+            line.render();
+           
             Display.update();
             Display.sync(60);
         }
@@ -65,8 +79,39 @@ private void render(){
     Display.destroy();
 }
 
+interface Shapes{
+    public void render();
+}
+
+class Square implements Shapes{  
+        public void render(){
+            
+    }
+}
+class Circle implements Shapes{
+        public void render(){
+
+    }
+
+}
+class Line implements Shapes{
+        public void render(){
+
+    }
+}
 
 public static void main(String[] args)throws Exception{
+    
+    for (int i = 0; i < args.length; i++){
+        if (args[i].equals("--path") || args[i].equals("-p")){
+            String pathToFile = args[i + 1];
+            System.out.println(pathToFile);
+            break;
+        }
+        else{
+            break;
+        }
+    }
     FundamentalsOpenGL instance = new FundamentalsOpenGL();
     instance.start();
 }
