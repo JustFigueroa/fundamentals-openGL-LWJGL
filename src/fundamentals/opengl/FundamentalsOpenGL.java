@@ -99,21 +99,37 @@ class Line implements Shapes{
 
     }
 }
-
-public static void main(String[] args)throws Exception{
-    
-    for (int i = 0; i < args.length; i++){
+public static String getPathToFile(String[] args){
+    String pathToFile;
+    try{
+        for (int i = 0; i < args.length; i++){
         if (args[i].equals("--path") || args[i].equals("-p")){
-            String pathToFile = args[i + 1];
-            System.out.println(pathToFile);
-            break;
-        }
-        else{
-            break;
+            pathToFile = args[i + 1];
+        return pathToFile;
+            }
+        else
+            return "Invalid arguements";
         }
     }
+    catch (Exception e){
+        return "Error: 1";
+    }
+    return "Error: 1";
+}
+
+static void parseUserFile(String pathToFile){
+    File coordinateShapes = new File(pathToFile);
+    if (coordinateShapes.isFile())
+        System.out.println("File Found");
+    else 
+            System.out.println("File not Found");
+
+}
+
+public static void main(String[] args)throws Exception{
+    String pathToFile = getPathToFile(args);
+    parseUserFile(pathToFile);
     FundamentalsOpenGL instance = new FundamentalsOpenGL();
     instance.start();
 }
-
 }
