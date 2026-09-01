@@ -4,7 +4,7 @@
 * class: CS 4450 – Computer Graphics
 *
 * assignment: program 1
-* date last modified: 8/27/2026
+* date last modified: 09/01/2026
 *
 * purpose: This program draws a window and draws primitives based on coordinates
 * from file passed by user via command line
@@ -17,6 +17,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.input.Keyboard;
+import java.util.ArrayList;
 //For Reading the File
 import java.util.Scanner;
 import java.io.FileInputStream;
@@ -24,6 +25,36 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class FundamentalsOpenGL{
+    
+/* 
+ * getPathToFile();
+ * @param args : The arguments passed after running program in the command line to be parsed
+ * @return pathToFile : The path to the coordinate file
+ */
+    
+public static String getPathToFile(String[] args){
+    String pathToFile;
+    try{
+        for (int i = 0; i < args.length; i++){
+        if (args[i].equals("--path") || args[i].equals("-p")){
+            pathToFile = args[i + 1];
+        return pathToFile;
+            }
+        else
+            return "Invalid arguements";
+        }
+    }
+    catch (Exception e){
+        return "Error: 1";
+    }
+    return "Error: 1";
+}
+/*
+ * readFile();
+ * @param pathToFile : The path to the coordingate file
+ * @return toRender : a 2D array with the desired shapes and their respectice parameters
+ */
+
 static public String[][] readFile (String pathToFile) throws FileNotFoundException{
     
     String[][] toRender = new String[10][10];
@@ -33,9 +64,9 @@ static public String[][] readFile (String pathToFile) throws FileNotFoundExcepti
     System.out.println(sc.nextLine());
     
     }
-
     return toRender;
 }
+
 public void start(){
     try{
         String[][] test = new String[0][0];
@@ -65,6 +96,7 @@ private void initGL(){
     glMatrixMode(GL_MODELVIEW);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
+
 void renderCircle(float x, float y, float radius){
 
 }
@@ -75,9 +107,9 @@ void renderEllipse(){
 
 }
 private void render(String[][] toRender){
-    int linesToRender = 0;
-    int ellipsesToRender = 0;
-    int circlesToRender = 0;
+    ArrayList<Integer> circleIndex = new ArrayList<Integer>();
+    ArrayList<Integer> lineIndex = new ArrayList<Integer>();
+    ArrayList<Integer> ellipseIndex = new ArrayList<Integer>();
 
     while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
         try{
@@ -85,24 +117,23 @@ private void render(String[][] toRender){
             for (int i = 0; i < toRender[0].length; i++){
                 
                 if (toRender[0][i].equals("l")){
-                    linesToRender++;
+                    lineIndex.add(i);
                 }
                 else if (toRender[0][i].equals("e")){
-                    ellipsesToRender++;
+                    ellipseIndex.add(i);
                 }
                 else if (toRender[0][i].equals("c")){
-                    circlesToRender++;
+                    circleIndex.add(i);
                 }
             }
-            
-            for (int i = 0; i < linesToRender; i++){
-                System.out.println("Line Drawn");
+            for (int i = 0; i < lineIndex.size(); i++){
+                
             }
-            for (int i = 0; i < circlesToRender; i++){
-                System.out.println("Circle Drawn");
-            }
-            for (int i = 0; i < ellipsesToRender; i++){
-                System.out.println("Ellipse Drawn");
+            for (int i = 0; i < ellipseIndex.size(); i++){
+                
+            } 
+            for (int i = 0; i < circleIndex.size(); i++){
+                
             }
             
             Display.update();
@@ -114,23 +145,8 @@ private void render(String[][] toRender){
     }
     Display.destroy();
 }
-public static String getPathToFile(String[] args){
-    String pathToFile;
-    try{
-        for (int i = 0; i < args.length; i++){
-        if (args[i].equals("--path") || args[i].equals("-p")){
-            pathToFile = args[i + 1];
-        return pathToFile;
-            }
-        else
-            return "Invalid arguements";
-        }
-    }
-    catch (Exception e){
-        return "Error: 1";
-    }
-    return "Error: 1";
-}
+
+
 public static void main(String[] args)throws Exception{
     String pathToFile = getPathToFile(args);
     String[][] toRender = readFile(pathToFile);
