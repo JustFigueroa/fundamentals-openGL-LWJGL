@@ -10,25 +10,39 @@
 * from file passed by user via command line
 *
 ****************************************************************/
-
+//For Drawing Shapes
 package fundamentals.opengl;
 import java.io.File;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.input.Keyboard;
+//For Reading the File
+import java.util.Scanner;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class FundamentalsOpenGL{
+static public String[][] readFile (String pathToFile) throws FileNotFoundException{
     
-public void readFile(){
+    String[][] toRender = new String[10][10];
+    InputStream is = new FileInputStream(pathToFile);
+    Scanner sc = new Scanner(is);
+    while (sc.hasNextLine()){
+    System.out.println(sc.nextLine());
     
+    }
+
+    return toRender;
 }
 public void start(){
     try{
+        String[][] test = new String[0][0];
         createWindow();
         Keyboard.create();
         initGL();
-        render();
+        render(test);
     }
     catch (Exception e){
         e.printStackTrace();
@@ -37,14 +51,12 @@ public void start(){
 public void end(){
     Display.destroy();
 }
-
 private void createWindow() throws Exception{
     Display.setFullscreen(false);
     Display.setDisplayMode(new DisplayMode(640, 480));
     Display.setTitle("Program 1: Render Shapes");
     Display.create();
 }
-
 private void initGL(){
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
@@ -53,22 +65,46 @@ private void initGL(){
     glMatrixMode(GL_MODELVIEW);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
+void renderCircle(float x, float y, float radius){
 
-private void render(){
-    Circle circle = new Circle();
-    Square square = new Square();
-    Line line = new Line();
-    
+}
+void renderLine(float startX, float startY, float endX, float endY){
+
+}
+void renderEllipse(){
+
+}
+private void render(String[][] toRender){
+    int linesToRender = 0;
+    int ellipsesToRender = 0;
+    int circlesToRender = 0;
+
     while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
         try{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glLoadIdentity();
-            glColor3f(1.0f,1.0f,1.0f);
+            for (int i = 0; i < toRender[0].length; i++){
+                
+                if (toRender[0][i].equals("l")){
+                    linesToRender++;
+                }
+                else if (toRender[0][i].equals("e")){
+                    ellipsesToRender++;
+                }
+                else if (toRender[0][i].equals("c")){
+                    circlesToRender++;
+                }
+            }
             
-            circle.render();
-            square.render();
-            line.render();
-           
+            for (int i = 0; i < linesToRender; i++){
+                System.out.println("Line Drawn");
+            }
+            for (int i = 0; i < circlesToRender; i++){
+                System.out.println("Circle Drawn");
+            }
+            for (int i = 0; i < ellipsesToRender; i++){
+                System.out.println("Ellipse Drawn");
+            }
+            
             Display.update();
             Display.sync(60);
         }
@@ -77,27 +113,6 @@ private void render(){
         }
     }
     Display.destroy();
-}
-
-interface Shapes{
-    public void render();
-}
-
-class Square implements Shapes{  
-        public void render(){
-            
-    }
-}
-class Circle implements Shapes{
-        public void render(){
-
-    }
-
-}
-class Line implements Shapes{
-        public void render(){
-
-    }
 }
 public static String getPathToFile(String[] args){
     String pathToFile;
@@ -116,19 +131,9 @@ public static String getPathToFile(String[] args){
     }
     return "Error: 1";
 }
-
-static void parseUserFile(String pathToFile){
-    File coordinateShapes = new File(pathToFile);
-    if (coordinateShapes.isFile())
-        System.out.println("File Found");
-    else 
-            System.out.println("File not Found");
-
-}
-
 public static void main(String[] args)throws Exception{
     String pathToFile = getPathToFile(args);
-    parseUserFile(pathToFile);
+    String[][] toRender = readFile(pathToFile);
     FundamentalsOpenGL instance = new FundamentalsOpenGL();
     instance.start();
 }
