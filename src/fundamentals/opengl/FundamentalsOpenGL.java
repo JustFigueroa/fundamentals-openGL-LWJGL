@@ -4,7 +4,7 @@
 * class: CS 4450 – Computer Graphics
 *
 * assignment: program 1
-* date last modified: 09/01/2026
+* date last modified: 09/02/2026
 *
 * purpose: This program draws a window and draws primitives based on coordinates
 * from file passed by user via command line
@@ -26,12 +26,14 @@ import java.io.InputStream;
 
 public class FundamentalsOpenGL{
     
+final int ELLIPSE_PARAMS = 3;
+final int CIRCLE_PARAMS = 3;
+final int LINE_PARAMS = 4;
 /* 
  * getPathToFile();
  * @param args : The arguments passed after running program in the command line to be parsed
  * @return pathToFile : The path to the coordinate file
- */
-    
+ */   
 public static String getPathToFile(String[] args){
     String pathToFile;
     try{
@@ -49,45 +51,67 @@ public static String getPathToFile(String[] args){
     }
     return "Error: 1";
 }
+
 /*
  * readFile();
  * @param pathToFile : The path to the coordingate file
  * @return toRender : a 2D array with the desired shapes and their respectice parameters
  */
+static public String[][] readFile(String pathToFile)
+        throws FileNotFoundException {
 
-static public String[][] readFile (String pathToFile) throws FileNotFoundException{
-    
     String[][] toRender = new String[10][10];
-    InputStream is = new FileInputStream(pathToFile);
-    Scanner sc = new Scanner(is);
-    while (sc.hasNextLine()){
-    System.out.println(sc.nextLine());
-    
+    int row = 0;
+
+    try (Scanner fileScanner = new Scanner(new File(pathToFile))) {
+
+        while (fileScanner.hasNextLine() && row < toRender.length) {
+            String line = fileScanner.nextLine();
+
+            try (Scanner lineScanner = new Scanner(line)) {
+                lineScanner.useDelimiter("[,\\s]+");
+
+                int column = 0;
+
+                while (lineScanner.hasNext()
+                        && column < toRender[row].length) {
+
+                    toRender[row][column] = lineScanner.next();
+                    column++;
+                }
+            }
+            row++;
+        }
     }
+
     return toRender;
 }
 
-public void start(){
+public void start(String[] args){
     try{
-        String[][] test = new String[0][0];
+        String pathToFile = getPathToFile(args);
+        String[][] toRender = readFile(pathToFile);
         createWindow();
         Keyboard.create();
         initGL();
-        render(test);
+        render(toRender);
     }
     catch (Exception e){
         e.printStackTrace();
     }
 }
+
 public void end(){
     Display.destroy();
 }
+
 private void createWindow() throws Exception{
     Display.setFullscreen(false);
     Display.setDisplayMode(new DisplayMode(640, 480));
     Display.setTitle("Program 1: Render Shapes");
     Display.create();
 }
+
 private void initGL(){
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glMatrixMode(GL_PROJECTION);
@@ -98,59 +122,93 @@ private void initGL(){
 }
 
 void renderCircle(float x, float y, float radius){
-
 }
+
 void renderLine(float startX, float startY, float endX, float endY){
+    float dx = endX - startX;
+    float dy = Math.abs(endY - startY);
+    float incramentRight = 2 * dy;
+    float incramentUpRight = 2 * (dy - dx);
+    float distToMidpoint = ((2 * (dy)) - dx);
+    float toPlotX = startX;
+    float toPlotY = startY;
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glPointSize(1);
+    glBegin(GL_POINTS);
+    glVertex2f(startX, startY);
 
-}
-void renderEllipse(){
-
-}
-private void render(String[][] toRender){
-    ArrayList<Integer> circleIndex = new ArrayList<Integer>();
-    ArrayList<Integer> lineIndex = new ArrayList<Integer>();
-    ArrayList<Integer> ellipseIndex = new ArrayList<Integer>();
-
-    while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-        try{
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            for (int i = 0; i < toRender[0].length; i++){
-                
-                if (toRender[0][i].equals("l")){
-                    lineIndex.add(i);
-                }
-                else if (toRender[0][i].equals("e")){
-                    ellipseIndex.add(i);
-                }
-                else if (toRender[0][i].equals("c")){
-                    circleIndex.add(i);
-                }
+    while (toPlotX <= endX){
+        if (endY <= startY){
+            if (distToMidpoint < 0){
+                toPlotX += 1;
+                distToMidpoint += incramentRight;
+                glVertex2f(toPlotX, toPlotY);
             }
-            for (int i = 0; i < lineIndex.size(); i++){
-                
+            else{
+                toPlotX += 1;
+                toPlotY += -1;
+                distToMidpoint += incramentUpRight;
+                glVertex2f(toPlotX, toPlotY);
             }
-            for (int i = 0; i < ellipseIndex.size(); i++){
-                
-            } 
-            for (int i = 0; i < circleIndex.size(); i++){
-                
-            }
-            
-            Display.update();
-            Display.sync(60);
+    }
+    else {
+        if (distToMidpoint > 0){
+            toPlotX += 1;
+            toPlotY += 1;
+            distToMidpoint += incramentUpRight;
+            glVertex2f(toPlotX, toPlotY);
         }
-        catch (Exception e){
-            
+        else if (distToMidpoint < 0){
+            toPlotX += 1;
+            distToMidpoint += incramentRight;
+            glVertex2f(toPlotX, toPlotY);
         }
     }
+}
+    glEnd();
+}
+
+
+void renderEllipse(float x, float y, float radius){
+
+}
+
+private void render(String[][] toRender){
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+        try{
+            for (int i = 0; i < 10; i++){
+                if (toRender[i] == null ||
+                    toRender[i].length == 0 ||
+                    toRender[i][0] == null) {
+                    continue;
+                }
+                else{
+                        if (toRender[i][0].equals("l")){
+                            renderLine(Float.parseFloat(toRender[i][1]), Float.parseFloat(toRender[i][2]), Float.parseFloat(toRender [i][3]), Float.parseFloat(toRender[i][4]));
+                        }
+                        else if (toRender[i][0].equals("e")){
+                            renderEllipse(Float.parseFloat(toRender[i][1]), Float.parseFloat(toRender[i][2]), Float.parseFloat(toRender [i][3]));
+                        }
+                        else if (toRender[i][0].equals("c")){
+                            renderCircle(Float.parseFloat(toRender[i][1]), Float.parseFloat(toRender[i][2]), Float.parseFloat(toRender [i][3]));
+                        }
+                    }
+                }
+            Display.update();
+            Display.sync(60);
+            }
+        catch (Exception e){
+            e.printStackTrace();
+            }
+        }
     Display.destroy();
 }
 
 
 public static void main(String[] args)throws Exception{
-    String pathToFile = getPathToFile(args);
-    String[][] toRender = readFile(pathToFile);
+    
     FundamentalsOpenGL instance = new FundamentalsOpenGL();
-    instance.start();
+    instance.start(args);
 }
 }
