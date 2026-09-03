@@ -17,18 +17,12 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.input.Keyboard;
-import java.util.ArrayList;
 //For Reading the File
 import java.util.Scanner;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class FundamentalsOpenGL{
     
-final int ELLIPSE_PARAMS = 3;
-final int CIRCLE_PARAMS = 3;
-final int LINE_PARAMS = 4;
 /* 
  * getPathToFile();
  * @param args : The arguments passed after running program in the command line to be parsed
